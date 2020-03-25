@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  09/26/2019 21:33:20 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  10/18/2019 22:25:18 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -18,90 +18,96 @@ line level    source
    8          #include "mainproc.h"
    9          
   10          //extern u8 usart1_date,usart2_date;
-  11          
-  12          
-  13          void main(void)
-  14          {
-  15   1        EVNT_Handle evnt = 0;
-  16   1        u8    last_rxd_stat = 0x00;
-  17   1        u8    last_rxd_change_cnt = 0x00;
-  18   1        /* 正式执行程序 */
-  19   1        p_appc_all_init();
-  20   1      
-  21   1        /* 输出编译日期 */
-  22   1        //p_uart1_send_string(__DATE__" "__TIME__" Compiled.");
-  23   1      
-  24   1        p_delay_10ms(100);
+  11          /*
+  12                1.0版本
+  13             1 将原本测试串口1P30/P31端口转换为P36/P37（由于GSM是连这两个口）
+  14             2 删除了一些测试的日志
+  15             3 怎加定时发送MCU数据
+  16          */
+  17          
+  18          void main(void)
+  19          {
+  20   1        EVNT_Handle evnt = 0;
+  21   1        u8    last_rxd_stat = 0x00;
+  22   1        u8    last_rxd_change_cnt = 0x00;
+  23   1        /* 正式执行程序 */
+  24   1        p_appc_all_init();
   25   1      
-  26   1        while (1)
-  27   1        {
-  28   2          /* 防止后面的事件没有被询问到 */
-  29   2          evnt = evnt >= EVNT_MAX ? 0 : evnt + 1;
-  30   2      
-  31   2          /* 事件轮询 */
-  32   2          for (; evnt < EVNT_MAX; ++evnt)
-  33   2          {
-  34   3            if (p_envt_get_event(evnt))
-  35   3            {
-  36   4              p_envt_clear_event(evnt);
-  37   4              break;
-  38   4            }
-  39   3          }
-  40   2      
-  41   2          /* 事件处理 */
-  42   2          switch (evnt)
-  43   2          {
-  44   3          case EVNT_INIT:
-  45   3            break;
-  46   3          case EVNT_WATERMARK:
-  47   3            p_watermark_ctrl(g_config.m_enbale_sy1, g_config.m_enbale_sy2);
-  48   3            if ((g_config.m_enbale_sy1 == 0) && (g_config.m_enbale_sy2 == 0))   // 防止保留上次还有的数据
-  49   3            {
-  50   4              g_sy1_shark_cnt = 0;
-  51   4              g_sy2_shark_cnt = 0;
-  52   4            }
-  53   3            evnt = 0;
-  54   3            break;
-C51 COMPILER V9.54   MAIN                                                                  09/26/2019 21:33:20 PAGE 2   
+  26   1        /* 输出编译日期 */
+  27   1        //p_uart1_send_string(__DATE__" "__TIME__" Compiled.");
+  28   1      
+  29   1        p_delay_10ms(100);
+  30   1      
+  31   1        while (1)
+  32   1        {
+  33   2          /* 防止后面的事件没有被询问到 */
+  34   2          evnt = evnt >= EVNT_MAX ? 0 : evnt + 1;
+  35   2      
+  36   2          /* 事件轮询 */
+  37   2          for (; evnt < EVNT_MAX; ++evnt)
+  38   2          {
+  39   3            if (p_envt_get_event(evnt))
+  40   3            {
+  41   4              p_envt_clear_event(evnt);
+  42   4              break;
+  43   4            }
+  44   3          }
+  45   2      
+  46   2          /* 事件处理 */
+  47   2          switch (evnt)
+  48   2          {
+  49   3          case EVNT_INIT:
+  50   3            break;
+  51   3          case EVNT_WATERMARK:
+  52   3            p_watermark_ctrl(g_config.m_enbale_sy1, g_config.m_enbale_sy2);
+  53   3            if ((g_config.m_enbale_sy1 == 0) && (g_config.m_enbale_sy2 == 0))   // 防止保留上次还有的数据
+  54   3            {
+C51 COMPILER V9.54   MAIN                                                                  10/18/2019 22:25:18 PAGE 2   
 
-  55   3          case EVNT_SLEEP:
-  56   3            /* 睡眠任务 */
-  57   3            p_uart1_send_string("OK2");
-  58   3            p_delay_10ms(100);
-  59   3            p_appc_task_sleep_proc(); // 睡醒后进行发送一次数据
-  60   3            p_uart1_send_string("OK3");
-  61   3            evnt = 0;                 // 这个一定要清0
-  62   3            break;
-  63   3      
-  64   3          default:
-  65   3            break;
-  66   3          }
-  67   2      
-  68   2          /* 串口1接收处理与Air相连接 */
-  69   2          if (COM1.RX_TimeOut
-  70   2            && COM1.RX_TimeOut <= TimeOutSet2)
-  71   2          {
-  72   3            /* 防止在没有接收到数据的时候，重复进入处理函数 */
-  73   3            COM1.RX_TimeOut = 0;
-  74   3            /* 处理串口数据（解析来自GSM的数据） */
-  75   3            p_proc_data_parser_from_air();
-  76   3            memset(RX1_Buffer, 0, COM1.RX_Cnt);
-  77   3            COM1.RX_Cnt = 0;
-  78   3          }
-  79   2      
-  80   2          /* 串口2接收处理与wifi相连接 */
-  81   2          if (COM2.RX_TimeOut
-  82   2            && COM2.RX_TimeOut <= TimeOutSet2)
-  83   2          {
-  84   3            /* 防止在没有接收到数据的时候，重复进入处理函数 */
-  85   3            COM2.RX_TimeOut = 0;
-  86   3            /* 处理串口数据(打包WIFI数据和MCU自身数据) */
-  87   3            p_proc_data_parser_from_loRa();
-  88   3            memset(RX2_Buffer, 0, COM2.RX_Cnt + 1);
-  89   3            COM2.RX_Cnt = 0;
-  90   3            //p_uart2_send_string("OK2");
-  91   3          }
-  92   2      #if 0
+  55   4              g_sy1_shark_cnt = 0;
+  56   4              g_sy2_shark_cnt = 0;
+  57   4            }
+  58   3            evnt = 0;
+  59   3            break;
+  60   3          case EVNT_SLEEP:
+  61   3            /* 睡眠任务 */
+  62   3            //p_uart1_send_string("OK2");
+  63   3            p_delay_10ms(100);
+  64   3            p_appc_task_sleep_proc(); // 睡醒后进行发送一次数据
+  65   3            //p_uart1_send_string("OK3");
+  66   3            evnt = 0;                 // 这个一定要清0
+  67   3            break;
+  68   3      
+  69   3          default:
+  70   3            break;
+  71   3          }
+  72   2      #if 0
+                  /* 串口1接收处理与Air相连接 */
+                  if (COM1.RX_TimeOut
+                    && COM1.RX_TimeOut <= TimeOutSet2)
+                  {
+                    /* 防止在没有接收到数据的时候，重复进入处理函数 */
+                    COM1.RX_TimeOut = 0;
+                    /* 处理串口数据（解析来自GSM的数据） */
+                    p_proc_data_parser_from_air();
+                    memset(RX1_Buffer, 0, COM1.RX_Cnt);
+                    COM1.RX_Cnt = 0;
+                  }
+              
+                  /* 串口2接收处理与wifi相连接 */
+                  if (COM2.RX_TimeOut
+                    && COM2.RX_TimeOut <= TimeOutSet2)
+                  {
+                    /* 防止在没有接收到数据的时候，重复进入处理函数 */
+                    COM2.RX_TimeOut = 0;
+                    /* 处理串口数据(打包WIFI数据和MCU自身数据) */
+                    p_proc_data_parser_from_loRa();
+                    memset(RX2_Buffer, 0, COM2.RX_Cnt + 1);
+                    COM2.RX_Cnt = 0;
+                    //p_uart2_send_string("OK2");
+                  }
+              #endif    
+  98   2      #if 0
                   /* 定时发送数据包到GSM */
                   if (g_heart_sign == heart_send)
                   {
@@ -111,7 +117,7 @@ line level    source
                     g_heart_sign = heart_clear;
                   }
               #endif
- 102   2      #if 0
+ 108   2      #if 0
                   /* 再进行建立一个无串口2返回数值时接收MCU的数据（加一个协议进去或者加个定时器） */
                   if (usart1_date == 1)
                   {
@@ -120,14 +126,14 @@ line level    source
                     //p_uart1_send_string("OK1");
                     usart1_date = 0;
                   }
+C51 COMPILER V9.54   MAIN                                                                  10/18/2019 22:25:18 PAGE 3   
+
               
                   /* 建立一个烧写固件的转发 */
                   // 判断是否要进入下载模式（这个就是转换到WIFI的固件）目前是直接IO口数据转换就行（串1RX--串2RX）   
                   //但是满足的条件的含义未知？？
                   if (IAP_RXD == last_rxd_stat)
                   {
-C51 COMPILER V9.54   MAIN                                                                  09/26/2019 21:33:20 PAGE 3   
-
                     last_rxd_stat = IAP_RXD;
                     if (last_rxd_change_cnt++ > 10)
                     {
@@ -148,42 +154,44 @@ line level    source
                     }
                   }
               #endif
- 137   2      
- 138   2        }
- 139   1      }
- 140          
- 141          
- 142          /*
- 143          
- 144          void Delay1000ms()    //@12.000MHz
- 145          {
- 146            unsigned char i, j, k;
+ 143   2      
+ 144   2        }
+ 145   1      }
+ 146          
  147          
- 148            _nop_();
- 149            _nop_();
- 150            i = 61;
- 151            j = 225;
- 152            k = 62;
- 153            do
- 154            {
- 155              do
- 156              {
- 157                while (--k);
- 158              } while (--j);
- 159            } while (--i);
- 160          }
- 161          
- 162          */
- 163          
+ 148          /*
+ 149          
+ 150          void Delay1000ms()    //@12.000MHz
+ 151          {
+ 152            unsigned char i, j, k;
+ 153          
+ 154            _nop_();
+ 155            _nop_();
+ 156            i = 61;
+ 157            j = 225;
+ 158            k = 62;
+ 159            do
+ 160            {
+ 161              do
+ 162              {
+ 163                while (--k);
+ 164              } while (--j);
+ 165            } while (--i);
+ 166          }
+ 167          
+ 168          */
+ 169          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    313    ----
-   CONSTANT SIZE    =      8    ----
+   CODE SIZE        =    213    ----
+   CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----       3
    IDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   MAIN                                                                  10/18/2019 22:25:18 PAGE 4   
+
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 

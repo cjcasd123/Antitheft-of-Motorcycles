@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 1   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAINPROC
@@ -62,7 +62,7 @@ line level    source
   52   1      
   53   1        /* 串口初始化 */
   54   1        p_uart1_init();
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 2   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 2   
 
   55   1        p_uart2_init(); 
   56   1      
@@ -126,7 +126,7 @@ line level    source
  114   1        PORT_MODE_SET(2, 2, PORT_MODE_PP); P22 = 0;
  115   1        PORT_MODE_SET(2, 3, PORT_MODE_PP); P23 = 0;
  116   1        PORT_MODE_SET(2, 4, PORT_MODE_PP); P24 = 0;
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 3   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 3   
 
  117   1        PORT_MODE_SET(2, 5, PORT_MODE_PP); P25 = 0;
  118   1        PORT_MODE_SET(2, 6, PORT_MODE_PP); P26 = 0;
@@ -190,7 +190,7 @@ line level    source
  174   3            */
  175   3            //wake_up_remain_time = g_config.m_bypass_hour * 60 * 60 / 15;
  176   3            wake_up_remain_time = g_config.m_bypass_hour * 1 * 60 / 15;
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 4   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 4   
 
  177   3            
  178   3          }
@@ -254,7 +254,7 @@ line level    source
  236          
  237          
  238          /* 打包的固定格式（发送给LUAT） */
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 5   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 5   
 
  239          void p_pkg_data_init(void)
  240          {
@@ -318,7 +318,7 @@ line level    source
  298   1        {
  299   2          ++p_to_lora_data;
  300   2          ++cnt;
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 6   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 6   
 
  301   2        }
  302   1      
@@ -382,7 +382,7 @@ line level    source
  360   3            if (COMPARE_KEY(g_p_item_from_luat->key_name + 1, "ST")
  361   3              && CHECK_VALUE(g_p_item_from_luat->val))
  362   3            {
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 7   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 7   
 
  363   4              /* 睡眠时间 */
  364   4              g_config.m_bypass_hour = CUSTOM_ATOI_3(g_p_item_from_luat->val);
@@ -446,7 +446,7 @@ line level    source
  422   2          else {
  423   3            ++index;
  424   3          }
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 8   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 8   
 
  425   2        }
  426   1      
@@ -510,7 +510,7 @@ line level    source
                 else {
                   g_pkg_to_luat.WS_Data[0] = g_p_boot_reason[0];
                   g_pkg_to_luat.WS_Data[1] = g_p_boot_reason[1];
-C51 COMPILER V9.54   MAINPROC                                                              09/26/2019 21:32:19 PAGE 9   
+C51 COMPILER V9.54   MAINPROC                                                              10/17/2019 21:46:48 PAGE 9   
 
                   g_pkg_to_luat.WS_Data[2] = g_p_boot_reason[2];
                 }

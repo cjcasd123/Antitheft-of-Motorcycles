@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   UART                                                                  09/26/2019 21:32:20 PAGE 1   
+C51 COMPILER V9.54   UART                                                                  10/17/2019 21:46:48 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   52   4              //usart1_date = SBUF;
   53   4            }
   54   3            COM1.RX_TimeOut = TimeOutSet1;
-C51 COMPILER V9.54   UART                                                                  09/26/2019 21:32:20 PAGE 2   
+C51 COMPILER V9.54   UART                                                                  10/17/2019 21:46:48 PAGE 2   
 
   55   3          } while (0);
   56   2        }
@@ -75,7 +75,7 @@ line level    source
   63   1        PORT_MODE_SET(AIR_RX_G, AIR_RX_P, PORT_MODE_AD);
   64   1      
   65   1        /* 选择串口一的功能引脚为 RxD:P3.6  TxD:P3.7 */
-  66   1        //  P_SW1 = 0x40;
+  66   1          P_SW1 = 0x40;
   67   1        //disableUartInterrupts();
   68   1        SCON = 0x50;                    // 8位数据，可变波特率
   69   1        AUXR |= 0x40;                   // 定时器1时钟1为FOSC,即1T
@@ -126,7 +126,7 @@ line level    source
  114          {
  115   1        uint8_t i = 0;
  116   1      
-C51 COMPILER V9.54   UART                                                                  09/26/2019 21:32:20 PAGE 3   
+C51 COMPILER V9.54   UART                                                                  10/17/2019 21:46:48 PAGE 3   
 
  117   1        for (i = 0; i < length; i++)
  118   1        {
@@ -190,7 +190,7 @@ line level    source
  176            */
  177          
  178          void p_uart2_init(void)
-C51 COMPILER V9.54   UART                                                                  09/26/2019 21:32:20 PAGE 4   
+C51 COMPILER V9.54   UART                                                                  10/17/2019 21:46:48 PAGE 4   
 
  179          {
  180   1        WIFI_RX = 1;
@@ -254,7 +254,7 @@ line level    source
  238   3            continue;
  239   3          }
  240   2      
-C51 COMPILER V9.54   UART                                                                  09/26/2019 21:32:20 PAGE 5   
+C51 COMPILER V9.54   UART                                                                  10/17/2019 21:46:48 PAGE 5   
 
  241   2          if ('\"' == p[uart1_send_idx])
  242   2          {
@@ -318,7 +318,7 @@ line level    source
                 /* 9600 */
                 //SCON = 0x50;    // 8位数据,可变波特率
                 //AUXR |= 0x40;   // 定时器1时钟为Fosc,即1T
-C51 COMPILER V9.54   UART                                                                  09/26/2019 21:32:20 PAGE 6   
+C51 COMPILER V9.54   UART                                                                  10/17/2019 21:46:48 PAGE 6   
 
                 //AUXR &= 0xFE;   // 串口1选择定时器1为波特率发生器
                 //TMOD &= 0x0F;   // 设定定时器1为16位自动重装方式
@@ -362,7 +362,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    537    ----
+   CODE SIZE        =    540    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
